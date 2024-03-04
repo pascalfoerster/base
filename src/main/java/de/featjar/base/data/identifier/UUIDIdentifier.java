@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 FeatJAR-Development-Team
+ * Copyright (C) 2024 FeatJAR-Development-Team
  *
  * This file is part of FeatJAR-base.
  *
@@ -26,9 +26,14 @@ package de.featjar.base.data.identifier;
  * @author Elias Kuiter
  */
 public class UUIDIdentifier extends AIdentifier {
+
+    public static UUIDIdentifier newInstance() {
+        return new Factory().get();
+    }
+
     protected final java.util.UUID uuid;
 
-    public UUIDIdentifier(java.util.UUID uuid, Factory factory) {
+    private UUIDIdentifier(java.util.UUID uuid, Factory factory) {
         super(factory);
         this.uuid = uuid;
     }
@@ -48,12 +53,12 @@ public class UUIDIdentifier extends AIdentifier {
     public static class Factory implements IIdentifierFactory {
 
         @Override
-        public AIdentifier get() {
+        public UUIDIdentifier get() {
             return new UUIDIdentifier(java.util.UUID.randomUUID(), this);
         }
 
         @Override
-        public AIdentifier parse(String identifierString) {
+        public UUIDIdentifier parse(String identifierString) {
             return new UUIDIdentifier(java.util.UUID.fromString(identifierString), this);
         }
     }

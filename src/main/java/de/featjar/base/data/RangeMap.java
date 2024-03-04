@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 FeatJAR-Development-Team
+ * Copyright (C) 2024 FeatJAR-Development-Team
  *
  * This file is part of FeatJAR-base.
  *
@@ -93,11 +93,11 @@ public class RangeMap<T> {
     }
 
     protected Result<Integer> getMinimumIndex() {
-        return getValidIndexRange().flatMap(Range::getLowerBound);
+        return getValidIndexRange().map(Range::getLowerBound);
     }
 
     protected Result<Integer> getMaximumIndex() {
-        return getValidIndexRange().flatMap(Range::getUpperBound);
+        return getValidIndexRange().map(Range::getUpperBound);
     }
 
     protected boolean isValidIndex(int index) {

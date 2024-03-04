@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 FeatJAR-Development-Team
+ * Copyright (C) 2024 FeatJAR-Development-Team
  *
  * This file is part of FeatJAR-base.
  *
@@ -18,14 +18,22 @@
  *
  * See <https://github.com/FeatureIDE/FeatJAR-base> for further information.
  */
-package de.featjar.base.data;
+package de.featjar.base.data.operation;
 
 /**
- * An object that can mutate a {@link IMutable}.
+ * An interface for a generic operation that supports executing and undoing some action.
  *
- * @param <T> the type of the mutable object
- * @author Elias Kuiter
+ * @author Sebastian Krieter
  */
-public interface IMutator<T extends IMutable<T, ?>> {
-    T getMutable();
+public interface IOperation {
+
+    default boolean firstDo() {
+        return redo();
+    }
+
+    boolean undo();
+
+    boolean redo();
+
+    String getName();
 }

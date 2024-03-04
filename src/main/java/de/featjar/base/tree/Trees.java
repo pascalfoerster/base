@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 FeatJAR-Development-Team
+ * Copyright (C) 2024 FeatJAR-Development-Team
  *
  * This file is part of FeatJAR-base.
  *
@@ -69,9 +69,8 @@ public class Trees {
     }
 
     /**
-     * Traverses a tree using depth-first search, allowing for pre- and postorder
-     * traversal. This is equivalent to using a trivial {@link IInOrderTreeVisitor},
-     * but more efficient.
+     * Traverses a tree using depth-first search, allowing for pre-, in-, and post-order
+     * traversal.
      *
      * @param node    the starting node of the tree
      * @param visitor the visitor
@@ -203,7 +202,7 @@ public class Trees {
      * @param <T> the type of tree
      */
     @SuppressWarnings("unchecked")
-    public static <T extends ITree<T>> T clone(T root) {
+    public static <T extends ITree<T>, R extends T> R clone(R root) {
         if (root == null) {
             return null;
         }
@@ -231,7 +230,7 @@ public class Trees {
                 stack.pop();
             }
         }
-        return path.get(0);
+        return (R) path.get(0);
     }
 
     /**

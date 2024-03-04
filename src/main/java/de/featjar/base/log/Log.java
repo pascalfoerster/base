@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 FeatJAR-Development-Team
+ * Copyright (C) 2024 FeatJAR-Development-Team
  *
  * This file is part of FeatJAR-base.
  *
@@ -37,7 +37,7 @@ import java.util.function.Supplier;
  */
 public interface Log {
     /**
-     * Logging verbosity. Each verbosity (save for {@link Verbosity#NONE}) defines a
+     * Logging verbosity. Each verbosity defines a
      * type of message that can be logged. In addition, defines a log level that
      * includes all log messages of the message type and all types above.
      */
@@ -89,7 +89,12 @@ public interface Log {
                 error(problem.getException());
                 break;
             case WARNING:
-                warning(problem.getException());
+                warning(problem.getMessage());
+                break;
+            case INFO:
+                info(problem.getMessage());
+                break;
+            default:
                 break;
         }
     }

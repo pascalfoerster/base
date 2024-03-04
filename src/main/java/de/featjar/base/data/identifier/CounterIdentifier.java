@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 FeatJAR-Development-Team
+ * Copyright (C) 2024 FeatJAR-Development-Team
  *
  * This file is part of FeatJAR-base.
  *
@@ -26,6 +26,11 @@ package de.featjar.base.data.identifier;
  * @author Elias Kuiter
  */
 public class CounterIdentifier extends AIdentifier {
+
+    public static CounterIdentifier newInstance() {
+        return new Factory().get();
+    }
+
     protected final long counter;
 
     public CounterIdentifier(long counter, Factory factory) {
@@ -49,12 +54,12 @@ public class CounterIdentifier extends AIdentifier {
         long counter = 0;
 
         @Override
-        public IIdentifier get() {
+        public CounterIdentifier get() {
             return new CounterIdentifier(++counter, this);
         }
 
         @Override
-        public IIdentifier parse(String identifierString) {
+        public CounterIdentifier parse(String identifierString) {
             return new CounterIdentifier(Long.parseLong(identifierString), this);
         }
     }

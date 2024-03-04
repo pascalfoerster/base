@@ -94,6 +94,10 @@ public final class FeatJAR extends IO implements AutoCloseable {
             configurationConsumer.accept(cacheConfig);
             return this;
         }
+
+        public void initialize() {
+            FeatJAR.initialize(this);
+        }
     }
 
     /**
@@ -122,8 +126,11 @@ public final class FeatJAR extends IO implements AutoCloseable {
      * Initializes FeatJAR with a default configuration.
      */
     public static FeatJAR initialize() {
-        Configuration configuration = createDefaultConfiguration();
-        return initialize(configuration);
+        return initialize(createDefaultConfiguration());
+    }
+
+    public static Configuration configure() {
+        return new Configuration();
     }
 
     public static Configuration createDefaultConfiguration() {
@@ -153,7 +160,7 @@ public final class FeatJAR extends IO implements AutoCloseable {
     /**
      * Initializes FeatJAR.
      *
-     * @param configuration the FeatJAR configuration
+     * @param optionInput a list with options
      */
     public static FeatJAR initialize(OptionList optionInput) {
         if (instance != null) throw new RuntimeException("FeatJAR already initialized");

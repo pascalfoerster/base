@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 FeatJAR-Development-Team
+ * Copyright (C) 2024 FeatJAR-Development-Team
  *
  * This file is part of FeatJAR-base.
  *
@@ -66,7 +66,7 @@ public class Process implements Supplier<Result<List<String>>> {
     public Result<List<String>> get() {
         List<String> output = new ArrayList<>();
         Result<Void> result = run(output::add, output::add);
-        return result.flatMap(r -> Result.of(output));
+        return result.map(r -> output);
     }
 
     public Result<Void> run(Consumer<String> outConsumer, Consumer<String> errConsumer) {
@@ -74,6 +74,7 @@ public class Process implements Supplier<Result<List<String>>> {
         command.add(executablePath.toString());
         command.addAll(arguments);
         final ProcessBuilder processBuilder = new ProcessBuilder(command);
+        FeatJAR.log().debug(String.join(" ", processBuilder.command()));
         java.lang.Process process = null;
         try {
             Instant start = Instant.now();
@@ -87,23 +88,24 @@ public class Process implements Supplier<Result<List<String>>> {
             long elapsedTime = Duration.between(start, Instant.now()).toMillis();
             final int exitValue = process.exitValue();
             Result<Void> result;
-            if (exitValue == 0 && !errorOccurred) {
-                process = null;
+            if (!errorOccurred) {
                 result = Result.ofVoid();
             } else {
                 result = Result.empty(
                         new Problem(executablePath + " exited with value " + exitValue, Problem.Severity.ERROR));
             }
-            // todo: add info severity, as these are no real warnings
+            // TODO: add info severity, as these are no real warnings
             return Result.empty(
-                            new Problem("in time = " + terminatedInTime, Problem.Severity.WARNING),
-                            new Problem("elapsed time in ms = " + elapsedTime, Problem.Severity.WARNING))
+                            new Problem("exit code = " + exitValue, Problem.Severity.INFO),
+                            new Problem("in time = " + terminatedInTime, Problem.Severity.INFO),
+                            new Problem("elapsed time in ms = " + elapsedTime, Problem.Severity.INFO))
                     .merge(result);
         } catch (IOException | InterruptedException e) {
             return Result.empty(e);
         } finally {
             if (process != null) {
                 process.destroyForcibly();
+                process = null;
             }
         }
     }

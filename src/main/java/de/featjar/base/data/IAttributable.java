@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 FeatJAR-Development-Team
+ * Copyright (C) 2024 FeatJAR-Development-Team
  *
  * This file is part of FeatJAR-base.
  *
@@ -21,53 +21,69 @@
 package de.featjar.base.data;
 
 import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
 
 /**
- * An object that can be annotated with {@link Attribute} values to store additional metadata.
+ * An object that can be annotated with {@link Attribute} values to store
+ * additional metadata.
  *
  * @author Elias Kuiter
  */
 public interface IAttributable {
-    LinkedHashMap<IAttribute, Object> getAttributeValues();
+    Optional<Map<IAttribute<?>, Object>> getAttributes();
 
-    default Result<Object> getAttributeValue(Attribute attribute) {
-        return attribute.apply(this, getAttributeValues());
+    default <T> Result<T> getAttributeValue(Attribute<T> attribute) {
+        return attribute.apply(this);
     }
 
-    default boolean hasAttributeValue(Attribute attribute) {
+    default boolean hasAttributeValue(Attribute<?> attribute) {
         return getAttributeValue(attribute).isPresent();
     }
 
-    // todo: somehow avoid this weird atrocity
-    @SuppressWarnings("unchecked")
-    static <T extends IAttributable & IMutable<T, ?>> Mutator<T> createMutator(IAttributable attributable) {
-        return () -> (T) attributable;
+    default LinkedHashMap<IAttribute<?>, Object> cloneAttributes() {
+        Optional<Map<IAttribute<?>, Object>> attributes = getAttributes();
+        if (attributes.isEmpty()) {
+            return null;
+        }
+        LinkedHashMap<IAttribute<?>, Object> clone =
+                new LinkedHashMap<>((int) (attributes.get().size() * 1.5));
+        attributes.get().entrySet().stream()
+                .forEach(e -> clone.put(e.getKey(), e.getKey().copyValue(this)));
+        return clone;
     }
 
-    interface Mutator<T extends IAttributable & IMutable<T, ?>> extends IMutator<T> {
-        default void setAttributeValue(Attribute attribute, Object value) {
+    default <S> void checkType(Attribute<S> attribute, S value) {
+        if (!attribute.getType().isInstance(value)) {
+            throw new IllegalArgumentException(String.format(
+                    "cannot set attribute of type %s to value of type %s", attribute.getType(), value.getClass()));
+        }
+    }
+
+    default <S> void validate(Attribute<S> attribute, S value) {
+        if (!attribute.getValidator().test(this, value)) {
+            throw new IllegalArgumentException(
+                    String.format("failed to validate attribute %s for value %s", attribute, value));
+        }
+    }
+
+    default IMutatableAttributable mutate() {
+        return (IMutatableAttributable) this;
+    }
+
+    static interface IMutatableAttributable extends IAttributable {
+        <S> void setAttributeValue(Attribute<S> attribute, S value);
+
+        default boolean toggleAttributeValue(Attribute<Boolean> attribute) {
+            Boolean value = getAttributeValue(attribute).get();
             if (value == null) {
-                removeAttributeValue(attribute);
-                return;
+                value = attribute.getDefaultValue(this).orElse(Boolean.FALSE);
             }
-            if (!attribute.getType().equals(value.getClass())) {
-                throw new IllegalArgumentException("cannot set attribute of type " + attribute.getType()
-                        + " to value of type " + value.getClass());
-            }
-            if (!attribute.getValidator().test(getMutable(), value)) {
-                throw new IllegalArgumentException("failed to validate attribute " + attribute + " for value " + value);
-            }
-            getMutable().getAttributeValues().put(attribute, value);
+            boolean toggledValue = !value;
+            setAttributeValue(attribute, toggledValue);
+            return toggledValue;
         }
 
-        default <U> Object removeAttributeValue(Attribute attribute) {
-            return getMutable().getAttributeValues().remove(attribute);
-        }
-
-        default boolean toggleAttributeValue(Attribute attribute) {
-            boolean value = (boolean) getMutable().getAttributeValue(attribute).get();
-            setAttributeValue(attribute, !value);
-            return !value;
-        }
+        <S> S removeAttributeValue(Attribute<S> attribute);
     }
 }

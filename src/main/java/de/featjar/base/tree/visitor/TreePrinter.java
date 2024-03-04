@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 FeatJAR-Development-Team
+ * Copyright (C) 2024 FeatJAR-Development-Team
  *
  * This file is part of FeatJAR-base.
  *
@@ -51,16 +51,19 @@ public class TreePrinter implements ITreeVisitor<ITree<?>, String> {
         return toStringFunction;
     }
 
-    public void setIndentation(String indentation) {
+    public TreePrinter setIndentation(String indentation) {
         this.indentation = indentation;
+        return this;
     }
 
-    public void setFilter(Predicate<ITree<?>> filter) {
+    public TreePrinter setFilter(Predicate<ITree<?>> filter) {
         this.filter = filter;
+        return this;
     }
 
-    public void setToStringFunction(Function<ITree<?>, String> toStringFunction) {
+    public TreePrinter setToStringFunction(Function<ITree<?>, String> toStringFunction) {
         this.toStringFunction = toStringFunction;
+        return this;
     }
 
     @Override

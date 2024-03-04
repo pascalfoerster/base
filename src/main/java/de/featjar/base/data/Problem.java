@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 FeatJAR-Development-Team
+ * Copyright (C) 2024 FeatJAR-Development-Team
  *
  * This file is part of FeatJAR-base.
  *
@@ -36,6 +36,10 @@ public class Problem {
      * Severity of a problem.
      */
     public static enum Severity {
+        /**
+         * An info message, which does not prevent processing of an object.
+         */
+        INFO,
         /**
          * A warning, which does not prevent processing of an object.
          */

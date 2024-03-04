@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 FeatJAR-Development-Team
+ * Copyright (C) 2024 FeatJAR-Development-Team
  *
  * This file is part of FeatJAR-base.
  *
@@ -194,9 +194,9 @@ public class ConfigurableLog implements Log, IInitializer {
 
     /**
      * Creates a log. Overrides the standard output/error streams. That is, calls to
-     * {@link System#out} are equivalent to calling {@link #info(String)}.
+     * {@link System#out} are equivalent to calling {@link #info(String, Object...)}.
      * Analogously, calls to {@link System#err} are equivalent to calling
-     * {@link #error(String)}.
+     * {@link Log#error(String, Object...)}.
      *
      * @param configuration the configuration
      */
