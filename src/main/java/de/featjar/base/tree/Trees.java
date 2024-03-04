@@ -262,7 +262,10 @@ public class Trees {
                 entry.remainingChildren = new LinkedList<>(node.getChildren());
             }
             if (!entry.remainingChildren.isEmpty()) {
-                stack.push(new StackEntry<>(entry.remainingChildren.remove(0)));
+                T ele = entry.remainingChildren.remove(0);
+                if(ele.hasChildren()) {
+                    stack.push(new StackEntry<>(ele));
+                }
             } else {
                 final ArrayList<T> children = new ArrayList<>(node.getChildren());
                 children.sort(comparator);
